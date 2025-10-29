@@ -73,4 +73,7 @@ jobs:
       - name: Build
         run: npm run build --if-present
 
+      - name: Test (Vitest)
+        run: npm run test --if-present
+
 
