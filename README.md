@@ -1,4 +1,4 @@
-# Credit Jambo – Admin (Monorepo)
+# Credit Jambo – Admin Application (Monorepo)
 
 Admin-focused transformation of the Digital Credit & Savings Platform. This monorepo contains two apps:
 
@@ -112,8 +112,8 @@ How it works (high level)
 - PostgreSQL 14+
 - Redis 6+
 
-### Backend
-Seeder creates/updates an admin user. Configure via env then run migrations and seed.
+### Backend (Admin API)
+Seeder creates/updates an admin user. Configure via env then run migrations and seed. Admin endpoints are mounted under `/api/admin/*`.
 ```
 cd backend
 cp .env.example .env    # adjust env vars
@@ -122,9 +122,9 @@ npm run prisma:generate
 npm run prisma:migrate  # or: npx prisma migrate dev
 # seed admin
 npm run prisma:seed
-npm run dev             # http://localhost:5000
+npm run dev             # http://localhost:3000 (Admin API)
 ```
-Swagger: http://localhost:5000/api/docs
+Swagger (Admin): http://localhost:3000/api/docs
 
 Minimal .env
 ```
@@ -143,15 +143,15 @@ ADMIN_PHONE=+250788000000
 ADMIN_ROTATE_PASSWORD=false
 ```
 
-### Frontend
+### Frontend (Admin SPA)
 ```
 cd client
 npm install
-npm run dev             # http://localhost:5001
+npm run dev             # http://localhost:5001 (Admin SPA)
 ```
 Optional client .env
 ```
-VITE_API_BASE_URL=http://localhost:5000/api
+VITE_API_BASE_URL=http://localhost:3000/api
 VITE_API_TIMEOUT=30000
 ```
 
@@ -162,7 +162,7 @@ Frontend: `dev`, `build` , `test`
 
 ## Testing
 
-```
+
 Frontend (Vitest + Testing Library)
 - Integration tests live in `client/src/__tests__/` (e.g., `UsersPage.int.test.tsx`).
 - Run:
