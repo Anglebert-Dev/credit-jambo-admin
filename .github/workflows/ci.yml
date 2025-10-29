@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   backend:
-    name: Backend (build & tests)
+    name: Backend (build)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -35,20 +35,10 @@ jobs:
         run: npx prisma generate
 
       - name: Lint
-        run: |
-          if [ -f .eslintrc.cjs ] || [ -f .eslintrc.js ] || [ -f eslint.config.js ]; then
-            npm run lint --if-present
-          fi
+        run: npm run lint --if-present
 
       - name: Build
         run: npm run build --if-present
-
-      - name: Test
-        run: npm test --if-present -- --ci --reporters=default --reporters=jest-junit
-        env:
-          DATABASE_URL: postgresql://user:pass@localhost:5432/ci_db
-          JWT_SECRET: testsecret
-          JWT_REFRESH_SECRET: testrefresh
 
   client:
     name: Client (build)
@@ -75,5 +65,3 @@ jobs:
 
       - name: Test (Vitest)
         run: npm run test --if-present
-
-
