@@ -2,6 +2,7 @@ import { BadRequestError } from '../../common/exceptions/BadRequestError';
 import { NotFoundError } from '../../common/exceptions/NotFoundError';
 import { CreditRepaymentDto } from './credit.types';
 import { CreditRepository, PrismaCreditRepository } from './credit.repository';
+import { NotificationsService } from '../notifications/notifications.service';
 
 export class CreditService {
   constructor(private readonly repo: CreditRepository = new PrismaCreditRepository()) {}
@@ -86,6 +87,17 @@ export class CreditService {
       throw new BadRequestError('Only pending requests can be approved');
     }
     const updated = await this.repo.updateRequestStatus(id, { status: 'approved', approvedBy: adminId, approvedAt: new Date(), rejectionReason: null });
+    
+    try {
+      const notifications = new NotificationsService();
+      await notifications.notify({
+        userId: req.userId,
+        type: 'in_app',
+        title: 'Credit request approved',
+        message: `Your credit request of ${Number(req.amount).toLocaleString()} has been approved.`
+      });
+    } catch (_) {}
+    
     return updated;
   }
 
@@ -98,6 +110,17 @@ export class CreditService {
       throw new BadRequestError('Only pending requests can be rejected');
     }
     const updated = await this.repo.updateRequestStatus(id, { status: 'rejected', approvedBy: adminId, approvedAt: null, rejectionReason: reason });
+    
+    try {
+      const notifications = new NotificationsService();
+      await notifications.notify({
+        userId: req.userId,
+        type: 'in_app',
+        title: 'Credit request rejected',
+        message: `Your credit request of ${Number(req.amount).toLocaleString()} has been rejected. Reason: ${reason}`
+      });
+    } catch (_) {}
+    
     return updated;
   }
 }

@@ -10,7 +10,7 @@ const notificationsService = new NotificationsService();
 
 /**
  * @swagger
- * /api/notifications:
+ * /api/admin/notifications:
  *   post:
  *     tags: [Notifications]
  *     summary: Create and queue a notification
@@ -70,7 +70,7 @@ router.post(
 
 /**
  * @swagger
- * /api/notifications:
+ * /api/admin/notifications:
  *   get:
  *     tags: [Notifications]
  *     summary: List notifications
@@ -116,7 +116,7 @@ router.get(
 
 /**
  * @swagger
- * /api/notifications/{id}/read:
+ * /api/admin/notifications/{id}/read:
  *   patch:
  *     tags: [Notifications]
  *     summary: Mark a notification as read

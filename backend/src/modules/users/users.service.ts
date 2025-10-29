@@ -100,12 +100,31 @@ export class UsersService {
     if (email) where.email = { contains: email, mode: 'insensitive' };
 
     const orderBy: any = { [sortBy]: order };
-    const [items, total] = await Promise.all([
+    const [users, total] = await Promise.all([
       this.repo.list(where, skip, limit, orderBy),
       this.repo.count(where),
     ]);
 
-    return { data: items, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
+    const enriched = await Promise.all(users.map(async (u: any) => {
+      const [lastLoginAt, sessionsActive] = await Promise.all([
+        this.repo.findLastLogin(u.id),
+        this.repo.countActiveSessions(u.id)
+      ]);
+      return {
+        id: u.id,
+        email: u.email,
+        firstName: u.firstName,
+        lastName: u.lastName,
+        phoneNumber: u.phoneNumber,
+        role: u.role,
+        status: u.status,
+        createdAt: u.createdAt,
+        lastLoginAt,
+        sessionsActive
+      };
+    }));
+
+    return { data: enriched, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
   }
 
   async getUserDetails(id: string) {
@@ -113,7 +132,57 @@ export class UsersService {
     if (!user) {
       throw new NotFoundError('User not found');
     }
-    return user;
+
+    const [recentLogins, sessionsActive, creditCounts] = await Promise.all([
+      this.repo.findRecentLogins(id, 10),
+      this.repo.countActiveSessions(id),
+      this.repo.countCreditByStatus(id)
+    ]);
+
+    const devicesMap: Record<string, { deviceInfo: string | null; lastSeenAt: Date; ipAddress: string | null }> = {};
+    for (const rt of recentLogins) {
+      const key = rt.deviceInfo || 'unknown';
+      if (!devicesMap[key] || devicesMap[key].lastSeenAt < rt.createdAt) {
+        devicesMap[key] = { deviceInfo: rt.deviceInfo, lastSeenAt: rt.createdAt, ipAddress: rt.ipAddress };
+      }
+    }
+    const devices = Object.values(devicesMap);
+
+    return {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      status: user.status,
+      createdAt: user.createdAt,
+      savingsAccount: user.savingsAccount ? {
+        id: user.savingsAccount.id,
+        balance: Number(user.savingsAccount.balance),
+        currency: user.savingsAccount.currency,
+        status: user.savingsAccount.status,
+        createdAt: user.savingsAccount.createdAt
+      } : null,
+      credit: {
+        counts: creditCounts,
+        requests: user.creditRequests.map((r: any) => ({
+          id: r.id,
+          amount: Number(r.amount),
+          status: r.status,
+          purpose: r.purpose,
+          durationMonths: r.durationMonths,
+          interestRate: Number(r.interestRate),
+          createdAt: r.createdAt,
+          repayments: r.repayments.map((p: any) => ({ id: p.id, amount: Number(p.amount), paymentDate: p.paymentDate }))
+        }))
+      },
+      activity: {
+        sessionsActive,
+        recentLogins: recentLogins.map(rt => ({ createdAt: rt.createdAt, deviceInfo: rt.deviceInfo, ipAddress: rt.ipAddress, revokedAt: rt.revokedAt, expiresAt: rt.expiresAt })),
+        devices
+      }
+    };
   }
 
   async updateUserStatus(id: string, status: string) {
