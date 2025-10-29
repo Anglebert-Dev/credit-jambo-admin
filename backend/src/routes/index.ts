@@ -7,10 +7,10 @@ import notificationsRoutes from '../modules/notifications/notifications.controll
 
 const router = Router();
 
-router.use('/auth', authRoutes);
-router.use('/users', usersRoutes);
-router.use('/savings', savingsRoutes);
-router.use('/credit', creditRoutes);
-router.use('/notifications', notificationsRoutes);
+router.use('/admin/auth', authRoutes);
+router.use('/admin/users', usersRoutes);
+router.use('/admin/savings', savingsRoutes);
+router.use('/admin/credit', creditRoutes);
+router.use('/admin/notifications', notificationsRoutes);
 
 export default router;

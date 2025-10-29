@@ -28,8 +28,10 @@ const authService = new AuthService();
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: admin@creditjambo.com
  *               password:
  *                 type: string
+ *                 example: Admin@12345
  *     responses:
  *       200:
  *         description: Login successful

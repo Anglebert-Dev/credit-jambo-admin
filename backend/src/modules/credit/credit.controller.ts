@@ -10,7 +10,7 @@ const creditService = new CreditService();
 
 /**
  * @swagger
- * /api/credit/requests:
+ * /api/admin/credit/requests:
  *   get:
  *     tags: [Credit]
  *     summary: List all credit requests
@@ -67,7 +67,7 @@ router.get(
 
 /**
  * @swagger
- * /api/credit/requests/{id}:
+ * /api/admin/credit/requests/{id}:
  *   get:
  *     tags: [Credit]
  *     summary: Get credit request details with user and repayments
@@ -100,7 +100,7 @@ router.get(
 
 /**
  * @swagger
- * /api/credit/requests/{id}/approve:
+ * /api/admin/credit/requests/{id}/approve:
  *   patch:
  *     tags: [Credit]
  *     summary: Approve credit request
@@ -133,7 +133,7 @@ router.patch(
 
 /**
  * @swagger
- * /api/credit/requests/{id}/reject:
+ * /api/admin/credit/requests/{id}/reject:
  *   patch:
  *     tags: [Credit]
  *     summary: Reject credit request

@@ -11,7 +11,7 @@ const usersService = new UsersService();
 
 /**
  * @swagger
- * /api/users/profile:
+ * /api/admin/users/profile:
  *   get:
  *     tags: [Users]
  *     summary: Get user profile
@@ -68,7 +68,7 @@ router.get(
 
 /**
  * @swagger
- * /api/users:
+ * /api/admin/users:
  *   get:
  *     tags: [Users]
  *     summary: List users
@@ -136,7 +136,7 @@ router.get(
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /api/admin/users/{id}:
  *   get:
  *     tags: [Users]
  *     summary: Get user details
@@ -169,7 +169,7 @@ router.get(
 
 /**
  * @swagger
- * /api/users/{id}/status:
+ * /api/admin/users/{id}/status:
  *   patch:
  *     tags: [Users]
  *     summary: Update user status
@@ -211,7 +211,7 @@ router.patch(
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /api/admin/users/{id}:
  *   delete:
  *     tags: [Users]
  *     summary: Soft delete user
@@ -244,7 +244,7 @@ router.delete(
 
 /**
  * @swagger
- * /api/users/profile:
+ * /api/admin/users/profile:
  *   put:
  *     tags: [Users]
  *     summary: Update user profile
@@ -299,7 +299,7 @@ router.put(
 
 /**
  * @swagger
- * /api/users/password:
+ * /api/admin/users/password:
  *   patch:
  *     tags: [Users]
  *     summary: Change user password
