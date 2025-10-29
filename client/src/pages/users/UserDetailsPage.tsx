@@ -211,10 +211,6 @@ const UserDetailsPage = () => {
                 <p className="text-xl font-bold text-red-600">{user.credit.counts.rejected}</p>
                 <p className="text-xs text-gray-600">Rejected</p>
               </div>
-              <div className="text-center p-3 bg-blue-50 rounded-lg">
-                <p className="text-xl font-bold text-blue-600">{user.credit.counts.disbursed}</p>
-                <p className="text-xs text-gray-600">Disbursed</p>
-              </div>
               <div className="text-center p-3 bg-[#00A651]/10 rounded-lg">
                 <p className="text-xl font-bold text-[#00A651]">{user.credit.counts.repaid}</p>
                 <p className="text-xs text-gray-600">Repaid</p>

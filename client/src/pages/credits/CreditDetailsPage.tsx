@@ -81,7 +81,6 @@ const CreditDetailsPage = () => {
       pending: 'bg-yellow-100 text-yellow-700',
       approved: 'bg-green-100 text-green-700',
       rejected: 'bg-red-100 text-red-700',
-      disbursed: 'bg-blue-100 text-blue-700',
       repaid: 'bg-[#00A651]/10 text-[#00A651]',
     };
     return colors[status.toLowerCase()] || 'bg-gray-100 text-gray-700';

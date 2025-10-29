@@ -11,7 +11,7 @@ export interface UsersRepository {
   findRecentLogins(userId: string, limit: number): Promise<any[]>;
   countActiveSessions(userId: string): Promise<number>;
   findLastLogin(userId: string): Promise<Date | null>;
-  countCreditByStatus(userId: string): Promise<{ pending: number; approved: number; rejected: number; disbursed: number; repaid: number }>;
+  countCreditByStatus(userId: string): Promise<{ pending: number; approved: number; rejected: number;  repaid: number }>;
 }
 
 export class PrismaUsersRepository implements UsersRepository {
@@ -68,13 +68,12 @@ export class PrismaUsersRepository implements UsersRepository {
   }
 
   async countCreditByStatus(userId: string) {
-    const [pending, approved, rejected, disbursed, repaid] = await Promise.all([
+    const [pending, approved, rejected, repaid] = await Promise.all([
       prisma.creditRequest.count({ where: { userId, status: 'pending' } }),
       prisma.creditRequest.count({ where: { userId, status: 'approved' } }),
       prisma.creditRequest.count({ where: { userId, status: 'rejected' } }),
-      prisma.creditRequest.count({ where: { userId, status: 'disbursed' } }),
       prisma.creditRequest.count({ where: { userId, status: 'repaid' } }),
     ]);
-    return { pending, approved, rejected, disbursed, repaid };
+    return { pending, approved, rejected, repaid };
   }
 }

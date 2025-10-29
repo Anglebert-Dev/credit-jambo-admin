@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
-import { API_CONFIG } from '../config/api.config';
+import { API_CONFIG, API_ENDPOINTS } from '../config/api.config';
 import { storage } from '../common/utils/storage.util';
 import type { ApiError } from '../common/types/api.types';
 
@@ -89,7 +89,7 @@ class ApiService {
 
           try {
             const response = await axios.post(
-              `${API_CONFIG.baseURL}/auth/refresh`,
+              `${API_CONFIG.baseURL}${API_ENDPOINTS.auth.refresh}`,
               { refreshToken },
               { headers: { 'Content-Type': 'application/json' } }
             );

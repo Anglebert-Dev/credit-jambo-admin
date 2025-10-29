@@ -54,7 +54,6 @@ export interface AdminCreditSummary {
   pending: number;
   approved: number;
   rejected: number;
-  disbursed: number;
   repaid: number;
 }
 

@@ -160,15 +160,6 @@ const DashboardPage = () => {
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                <span className="text-gray-700">Disbursed</span>
-              </div>
-              <span className="font-bold text-blue-600">
-                {formatNumber(overview.credits.byStatus.disbursed)}
-              </span>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-              <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-[#00A651]"></div>
                 <span className="text-gray-700">Repaid</span>
               </div>

@@ -12,7 +12,6 @@ export class AnalyticsService {
       pendingCredits,
       approvedCredits,
       rejectedCredits,
-      disbursedCredits,
       repaidCredits,
       savingsAgg,
       activeSessions,
@@ -24,7 +23,6 @@ export class AnalyticsService {
       prisma.creditRequest.count({ where: { status: 'pending' } }),
       prisma.creditRequest.count({ where: { status: 'approved' } }),
       prisma.creditRequest.count({ where: { status: 'rejected' } }),
-      prisma.creditRequest.count({ where: { status: 'disbursed' } }),
       prisma.creditRequest.count({ where: { status: 'repaid' } }),
       prisma.savingsAccount.aggregate({ _sum: { balance: true } }),
       prisma.refreshToken.count({ where: { revokedAt: null, expiresAt: { gt: now } } }),
@@ -39,7 +37,6 @@ export class AnalyticsService {
           pending: pendingCredits,
           approved: approvedCredits,
           rejected: rejectedCredits,
-          disbursed: disbursedCredits,
           repaid: repaidCredits
         }
       },
