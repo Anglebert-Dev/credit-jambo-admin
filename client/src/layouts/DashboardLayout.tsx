@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Home, PiggyBank, CreditCard, User, LogOut, Menu, X, Bell } from 'lucide-react';
+import { Home, CreditCard, User, LogOut, Menu, X, Bell } from 'lucide-react';
 import { useAuth } from '../common/hooks/useAuth';
 import { useUIStore } from '../store/uiStore';
 import { useEffect } from 'react';
@@ -14,8 +14,8 @@ interface DashboardLayoutProps {
 
 const navigation = [
   { name: 'Dashboard', href: ROUTES.DASHBOARD, icon: Home },
-  { name: 'Savings', href: ROUTES.SAVINGS, icon: PiggyBank },
-  { name: 'Credit', href: ROUTES.CREDIT, icon: CreditCard },
+  { name: 'Users', href: ROUTES.USERS, icon: User },
+  { name: 'Credits', href: ROUTES.CREDITS, icon: CreditCard },
   { name: 'Notifications', href: ROUTES.NOTIFICATIONS, icon: Bell },
   { name: 'Profile', href: ROUTES.PROFILE, icon: User },
 ];

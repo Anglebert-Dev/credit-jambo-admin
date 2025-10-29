@@ -20,82 +20,7 @@ export interface ChangePasswordDto {
   currentPassword: string;
   newPassword: string;
 }
-
-export interface SavingsAccount {
-  id: string;
-  name: string;
-  balance: number;
-  currency: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Transaction {
-  id: string;
-  type: string;
-  amount: number;
-  balanceBefore: number;
-  balanceAfter: number;
-  description?: string;
-  referenceNumber: string;
-  status: string;
-  createdAt: string;
-}
-
-export interface DepositDto {
-  amount: number;
-  description?: string;
-}
-
-export interface WithdrawDto {
-  amount: number;
-  description?: string;
-}
-
-export interface CreateAccountDto {
-  name: string;
-  currency?: string;
-  initialDeposit?: number;
-}
-
-export interface UpdateAccountDto {
-  name?: string;
-  currency?: string;
-}
-
-export interface CreditRequest {
-  id: string;
-  amount: number;
-  purpose: string;
-  durationMonths: number;
-  interestRate: number;
-  status: string;
-  approvedBy?: string;
-  approvedAt?: string;
-  rejectionReason?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CreditRequestDto {
-  amount: number;
-  purpose: string;
-  durationMonths: number;
-}
-
-export interface CreditRepayment {
-  id: string;
-  amount: number;
-  referenceNumber: string;
-  createdAt: string;
-}
-
-export interface CreditRepaymentDto {
-  creditRequestId: string;
-  amount: number;
-}
-
+ 
 export interface Notification {
   id: string;
   type: string;
@@ -103,5 +28,69 @@ export interface Notification {
   message: string;
   read: boolean;
   sentAt: string;
+}
+
+export interface SavingsAnalytics {
+  totalBalance: number;
+  totalAccounts: number;
+  depositsCount: number;
+  withdrawalsCount: number;
+}
+
+export interface AdminUserListItem {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  role: string;
+  status: string;
+  createdAt: string;
+  lastLoginAt: string | null;
+  sessionsActive: number;
+}
+
+export interface AdminCreditSummary {
+  pending: number;
+  approved: number;
+  rejected: number;
+  disbursed: number;
+  repaid: number;
+}
+
+export interface AdminCreditRequest {
+  id: string;
+  amount: number;
+  purpose: string;
+  durationMonths: number;
+  interestRate: number;
+  status: string;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  rejectionReason?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  repayments?: { id: string; amount: number; paymentDate: string }[];
+}
+
+export interface AdminUserDetails {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  role: string;
+  status: string;
+  createdAt: string;
+  savingsAccount: { id: string; balance: number; currency: string; status: string; createdAt: string } | null;
+  credit: {
+    counts: AdminCreditSummary;
+    requests: AdminCreditRequest[];
+  };
+  activity: {
+    sessionsActive: number;
+    recentLogins: { createdAt: string; deviceInfo: string | null; ipAddress: string | null; revokedAt: string | null; expiresAt: string }[];
+    devices: { deviceInfo: string | null; lastSeenAt: string; ipAddress: string | null }[];
+  };
 }
 

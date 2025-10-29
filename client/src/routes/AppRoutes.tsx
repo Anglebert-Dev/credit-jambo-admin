@@ -8,12 +8,6 @@ import { Loader } from '../common/components/Loader';
 
 const LoginPage = lazy(() => import('../pages/auth/LoginPage'));
 const DashboardPage = lazy(() => import('../pages/dashboard/DashboardPage'));
-const SavingsPage = lazy(() => import('../pages/savings/SavingsPage'));
-const DepositPage = lazy(() => import('../pages/savings/DepositPage'));
-const WithdrawPage = lazy(() => import('../pages/savings/WithdrawPage'));
-const CreditPage = lazy(() => import('../pages/credit/CreditPage'));
-const RequestPage = lazy(() => import('../pages/credit/RequestPage'));
-const RepayPage = lazy(() => import('../pages/credit/RepayPage'));
 const ProfilePage = lazy(() => import('../pages/profile/ProfilePage'));
 const NotificationsPage = lazy(() => import('../pages/notifications/NotificationsPage'));
 
@@ -43,62 +37,21 @@ export const AppRoutes = () => {
           />
 
           <Route
-            path={ROUTES.SAVINGS}
+            path={ROUTES.USERS}
             element={
               <PrivateRoute>
                 <DashboardLayout>
-                  <SavingsPage />
+                  <DashboardPage />
                 </DashboardLayout>
               </PrivateRoute>
             }
           />
           <Route
-            path={ROUTES.SAVINGS_DEPOSIT}
+            path={ROUTES.CREDITS}
             element={
               <PrivateRoute>
                 <DashboardLayout>
-                  <DepositPage />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path={ROUTES.SAVINGS_WITHDRAW}
-            element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <WithdrawPage />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path={ROUTES.CREDIT}
-            element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <CreditPage />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path={ROUTES.CREDIT_REQUEST}
-            element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <RequestPage />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path={ROUTES.CREDIT_REPAY}
-            element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <RepayPage />
+                  <DashboardPage />
                 </DashboardLayout>
               </PrivateRoute>
             }
