@@ -7,7 +7,6 @@ import { DashboardLayout } from '../layouts/DashboardLayout';
 import { Loader } from '../common/components/Loader';
 
 const LoginPage = lazy(() => import('../pages/auth/LoginPage'));
-const RegisterPage = lazy(() => import('../pages/auth/RegisterPage'));
 const DashboardPage = lazy(() => import('../pages/dashboard/DashboardPage'));
 const SavingsPage = lazy(() => import('../pages/savings/SavingsPage'));
 const DepositPage = lazy(() => import('../pages/savings/DepositPage'));
@@ -28,14 +27,6 @@ export const AppRoutes = () => {
             element={
               <AuthLayout>
                 <LoginPage />
-              </AuthLayout>
-            }
-          />
-          <Route
-            path={ROUTES.REGISTER}
-            element={
-              <AuthLayout>
-                <RegisterPage />
               </AuthLayout>
             }
           />

@@ -1,11 +1,10 @@
 import { create } from 'zustand';
 import { authService } from '../services/auth.service';
 import { storage } from '../common/utils/storage.util';
-import type { AuthState, LoginDto, RegisterDto, UserResponse } from '../common/types/auth.types';
+import type { AuthState, LoginDto, UserResponse } from '../common/types/auth.types';
 
 interface AuthStore extends AuthState {
   login: (credentials: LoginDto) => Promise<void>;
-  register: (data: RegisterDto) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: UserResponse) => void;
 }
@@ -53,21 +52,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
     });
   },
 
-  register: async (data: RegisterDto) => {
-    const response = await authService.register(data);
-    
-    storage.setUser(response.user);
-    storage.setAccessToken(response.accessToken);
-    storage.setRefreshToken(response.refreshToken);
-
-    set({
-      user: response.user,
-      accessToken: response.accessToken,
-      refreshToken: response.refreshToken,
-      isAuthenticated: true,
-      isInitialized: true,
-    });
-  },
 
   logout: async () => {
     const refreshToken = storage.getRefreshToken();

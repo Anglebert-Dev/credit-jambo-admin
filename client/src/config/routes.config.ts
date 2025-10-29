@@ -1,32 +1,23 @@
 export const ROUTES = {
   LOGIN: '/login',
-  REGISTER: '/register',
 
   DASHBOARD: '/dashboard',
-  
-  SAVINGS: '/savings',
-  SAVINGS_DEPOSIT: '/savings/deposit',
-  SAVINGS_WITHDRAW: '/savings/withdraw',
-  
-  CREDIT: '/credit',
-  CREDIT_REQUEST: '/credit/request',
-  CREDIT_REPAY: '/credit/repay',
+  USERS: '/users',
+  USER_DETAILS: (id: string) => `/users/${id}`,
+  CREDITS: '/credits',
+  CREDIT_DETAILS: (id: string) => `/credits/${id}`,
   
   NOTIFICATIONS: '/notifications',
   
   PROFILE: '/profile',
 } as const;
 
-export const PUBLIC_ROUTES = [ROUTES.LOGIN, ROUTES.REGISTER];
+export const PUBLIC_ROUTES = [ROUTES.LOGIN];
 
 export const PROTECTED_ROUTES = [
   ROUTES.DASHBOARD,
-  ROUTES.SAVINGS,
-  ROUTES.SAVINGS_DEPOSIT,
-  ROUTES.SAVINGS_WITHDRAW,
-  ROUTES.CREDIT,
-  ROUTES.CREDIT_REQUEST,
-  ROUTES.CREDIT_REPAY,
+  ROUTES.USERS,
+  ROUTES.CREDITS,
   ROUTES.NOTIFICATIONS,
   ROUTES.PROFILE,
 ];

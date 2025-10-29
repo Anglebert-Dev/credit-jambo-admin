@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -51,7 +51,7 @@ const LoginPage = () => {
   return (
     <div className="w-full">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-black mb-2">Welcome Back</h2>
+        <h2 className="text-3xl font-bold text-black mb-2">Welcome Back Admin</h2>
         <p className="text-gray-600">Sign in to your account to continue</p>
       </div>
 
@@ -84,18 +84,6 @@ const LoginPage = () => {
           Sign In
         </Button>
       </form>
-
-      <div className="mt-6 text-center">
-        <p className="text-gray-600 text-sm">
-          Don't have an account?{' '}
-          <Link
-            to={ROUTES.REGISTER}
-            className="text-[#00A651] font-semibold hover:underline"
-          >
-            Create one now
-          </Link>
-        </p>
-      </div>
     </div>
   );
 };
