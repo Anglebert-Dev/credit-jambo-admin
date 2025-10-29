@@ -7,6 +7,7 @@ import { useUIStore } from '../store/uiStore';
 import { useEffect } from 'react';
 import { notificationsService } from '../services/notifications.service';
 import { ROUTES } from '../config/routes.config';
+import LogoImg from '../assets/images/unnamed.png';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -55,10 +56,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </button>
             
             <Link to={ROUTES.DASHBOARD} className="flex items-center">
-              <h1 className="text-xl font-bold">
-                <span className="text-[#00A651]">CREDIT</span>
-                <span className="text-black">JAMBO</span>
-              </h1>
+              <img src={LogoImg} alt="Credit Jambo" className="h-8 w-auto" />
             </Link>
           </div>
 
