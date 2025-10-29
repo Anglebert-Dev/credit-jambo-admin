@@ -3,8 +3,8 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { UsersService } from './users.service';
 import { authMiddleware } from '../../common/middleware/auth.middleware';
 import { validationMiddleware } from '../../common/middleware/validation.middleware';
-import { updateProfileValidation, changePasswordValidation } from './users.validation';
-import { successResponse } from '../../common/utils/response.util';
+import { updateProfileValidation, changePasswordValidation, listUsersValidation, userIdParamValidation, updateUserStatusValidation } from './users.validation';
+import { successResponse, paginatedResponse } from '../../common/utils/response.util';
 
 const router = Router();
 const usersService = new UsersService();
@@ -60,6 +60,182 @@ router.get(
     try {
       const result = await usersService.getProfile(req.user!.sub);
       res.json(successResponse(result));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     tags: [Users]
+ *     summary: List users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: role
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: email
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *         description: Field to sort by
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *     responses:
+ *       200:
+ *         description: Users listed
+ */
+router.get(
+  '/users',
+  authMiddleware,
+  listUsersValidation,
+  validationMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const page = parseInt((req.query.page as string) || '1');
+      const limit = parseInt((req.query.limit as string) || '10');
+      const role = (req.query.role as string) || undefined;
+      const status = (req.query.status as string) || undefined;
+      const email = (req.query.email as string) || undefined;
+      const sortBy = (req.query.sortBy as string) || undefined;
+      const order = (req.query.order as 'asc' | 'desc') || undefined;
+
+      const result = await usersService.listUsers({ page, limit, role, status, email, sortBy, order });
+      res.json(paginatedResponse(result.data, result.pagination.page, result.pagination.limit, result.pagination.total));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   get:
+ *     tags: [Users]
+ *     summary: Get user details
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User details
+ */
+router.get(
+  '/users/:id',
+  authMiddleware,
+  userIdParamValidation,
+  validationMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await usersService.getUserDetails(req.params.id);
+      res.json(successResponse(result));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /api/users/{id}/status:
+ *   patch:
+ *     tags: [Users]
+ *     summary: Update user status
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Status updated
+ */
+router.patch(
+  '/users/:id/status',
+  authMiddleware,
+  updateUserStatusValidation,
+  validationMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await usersService.updateUserStatus(req.params.id, req.body.status);
+      res.json(successResponse(result, 'Status updated'));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   delete:
+ *     tags: [Users]
+ *     summary: Soft delete user
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User soft-deleted
+ */
+router.delete(
+  '/users/:id',
+  authMiddleware,
+  userIdParamValidation,
+  validationMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await usersService.softDeleteUser(req.params.id);
+      res.json(successResponse(null, 'User deleted'));
     } catch (error) {
       next(error);
     }

@@ -90,4 +90,46 @@ export class UsersService {
       });
     } catch (_) {}
   }
+
+  async listUsers(params: { page: number; limit: number; role?: string; status?: string; email?: string; sortBy?: string; order?: 'asc' | 'desc'; }) {
+    const { page, limit, role, status, email, sortBy = 'createdAt', order = 'desc' } = params;
+    const skip = (page - 1) * limit;
+    const where: any = {};
+    if (role) where.role = role;
+    if (status) where.status = status;
+    if (email) where.email = { contains: email, mode: 'insensitive' };
+
+    const orderBy: any = { [sortBy]: order };
+    const [items, total] = await Promise.all([
+      this.repo.list(where, skip, limit, orderBy),
+      this.repo.count(where),
+    ]);
+
+    return { data: items, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async getUserDetails(id: string) {
+    const user = await this.repo.findDetailedById(id);
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+    return user;
+  }
+
+  async updateUserStatus(id: string, status: string) {
+    const user = await this.repo.findById(id);
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+    const updated = await this.repo.updateById(id, { status });
+    return updated;
+  }
+
+  async softDeleteUser(id: string) {
+    const user = await this.repo.findById(id);
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+    await this.repo.softDeleteById(id);
+  }
 }
