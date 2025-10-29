@@ -40,7 +40,7 @@ const ProfilePage = () => {
     register: registerProfile,
     handleSubmit: handleSubmitProfile,
     formState: { errors: profileErrors },
-  } = useForm<UpdateProfileDto>({
+  } = useForm<{ firstName: string; lastName: string; phoneNumber: string }>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
       firstName: user?.firstName || '',
@@ -58,10 +58,10 @@ const ProfilePage = () => {
     resolver: zodResolver(changePasswordSchema),
   });
 
-  const onUpdateProfile = async (data: UpdateProfileDto) => {
+  const onUpdateProfile = async (data: { firstName: string; lastName: string; phoneNumber: string }) => {
     try {
       setIsUpdatingProfile(true);
-      const updatedUser = await userService.updateProfile(data);
+      const updatedUser = await userService.updateProfile(data as UpdateProfileDto);
       setUser(updatedUser);
       success('Profile updated successfully!');
     } catch (err: any) {
