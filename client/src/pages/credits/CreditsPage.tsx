@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { CreditCard, Filter } from 'lucide-react';
 import { Card } from '../../common/components/Card';
 import { Button } from '../../common/components/Button';
+import { Select } from '../../common/components/Select';
 import { Loader } from '../../common/components/Loader';
 import { useToast } from '../../common/hooks/useToast';
 import { creditService } from '../../services/credit.service';
@@ -69,24 +70,26 @@ const CreditsPage = () => {
       </div>
 
       <Card padding="md">
-        <div className="flex items-center gap-4 mb-6">
+        <div className="mb-6 grid grid-cols-1 gap-3 md:flex md:items-center md:gap-4">
           <div className="flex items-center gap-2">
             <Filter size={18} className="text-gray-500" />
             <span className="text-sm text-gray-600">Filter by status:</span>
           </div>
-          <select
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent"
+          <Select
+            className="w-full md:w-60"
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
-          >
-            <option value="">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-            <option value="repaid">Repaid</option>
-          </select>
+            onChange={setStatus}
+            options={[
+              { label: 'All Status', value: '' },
+              { label: 'Pending', value: 'pending' },
+              { label: 'Approved', value: 'approved' },
+              { label: 'Rejected', value: 'rejected' },
+              { label: 'Repaid', value: 'repaid' },
+            ]}
+          />
           {status && (
             <Button
+              className="w-full md:w-auto"
               variant="outline"
               size="sm"
               onClick={() => setStatus('')}
@@ -106,7 +109,24 @@ const CreditsPage = () => {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div className="block md:hidden space-y-3">
+              {requests.map((r) => (
+                <div key={r.id} className="p-4 border border-gray-200 rounded-lg bg-white">
+                  <div className="flex items-center justify-between">
+                    <div className="font-semibold text-black">{formatCurrency(r.amount)}</div>
+                    <span className={`text-xs px-2 py-1 rounded-full ${getStatusBadge(r.status)}`}>{r.status}</span>
+                  </div>
+                  <div className="mt-1 text-sm text-gray-700">{r.durationMonths} months • {r.interestRate}%</div>
+                  <div className="mt-2 text-sm text-gray-700">{r.purpose}</div>
+                  <div className="mt-2 text-xs text-gray-500">{formatDateTime(r.createdAt)}</div>
+                  <div className="mt-3">
+                    <Button className="w-full" variant="ghost" size="sm" onClick={() => navigate(ROUTES.CREDIT_DETAILS(r.id))}>View Details</Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>

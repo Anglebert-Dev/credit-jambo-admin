@@ -127,7 +127,7 @@ const CreditDetailsPage = () => {
               <CreditCard className="text-purple-600" size={20} />
               <h2 className="text-lg font-semibold text-black">Request Information</h2>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Amount</p>
                 <p className="text-2xl font-bold text-black">{formatCurrency(request.amount)}</p>
@@ -175,7 +175,7 @@ const CreditDetailsPage = () => {
                 <User className="text-blue-600" size={20} />
                 <h2 className="text-lg font-semibold text-black">User Information</h2>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Name</p>
                   <p className="font-medium text-black">
@@ -184,11 +184,11 @@ const CreditDetailsPage = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Email</p>
-                  <p className="font-medium text-black">{request.user.email}</p>
+                  <p className="font-medium text-black break-all">{request.user.email}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Phone</p>
-                  <p className="font-medium text-black">{request.user.phoneNumber}</p>
+                  <p className="font-medium text-black break-all">{request.user.phoneNumber}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Status</p>
@@ -210,12 +210,12 @@ const CreditDetailsPage = () => {
               </div>
               <div className="space-y-2">
                 {request.repayments.map((repayment: any) => (
-                  <div key={repayment.id} className="p-3 bg-gray-50 rounded-lg flex items-center justify-between">
-                    <div>
+                  <div key={repayment.id} className="p-3 bg-gray-50 rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                    <div className="min-w-0">
                       <p className="font-medium text-black">{formatCurrency(repayment.amount)}</p>
                       <p className="text-xs text-gray-500">{formatDateTime(repayment.paymentDate)}</p>
                     </div>
-                    <span className="text-xs text-gray-500">{repayment.referenceNumber}</span>
+                    <span className="text-xs text-gray-500 break-all">{repayment.referenceNumber}</span>
                   </div>
                 ))}
               </div>

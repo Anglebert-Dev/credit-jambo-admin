@@ -90,7 +90,7 @@ const UserDetailsPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" onClick={() => navigate(ROUTES.USERS)}>
             <ArrowLeft size={18} />
@@ -103,10 +103,11 @@ const UserDetailsPage = () => {
           </div>
         </div>
         {user.role !== 'admin' && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <Button
               variant="outline"
               size="sm"
+              className="w-full sm:w-auto"
               onClick={() => setShowStatusModal(true)}
             >
               <Edit2 size={16} className="mr-2" />
@@ -115,7 +116,7 @@ const UserDetailsPage = () => {
             <Button
               variant="outline"
               size="sm"
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="w-full sm:w-auto text-red-600 hover:text-red-700 hover:bg-red-50"
               onClick={() => setShowDeleteModal(true)}
             >
               <Trash2 size={16} className="mr-2" />
@@ -170,7 +171,7 @@ const UserDetailsPage = () => {
                 </div>
                 <h2 className="text-lg font-semibold text-black">Savings Account</h2>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Balance</p>
                   <p className="text-2xl font-bold text-black">
@@ -198,7 +199,7 @@ const UserDetailsPage = () => {
               </div>
               <h2 className="text-lg font-semibold text-black">Credit Activity</h2>
             </div>
-            <div className="grid grid-cols-5 gap-3 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
               <div className="text-center p-3 bg-gray-50 rounded-lg">
                 <p className="text-xl font-bold text-black">{user.credit.counts.pending}</p>
                 <p className="text-xs text-gray-600">Pending</p>

@@ -26,7 +26,6 @@ async function main() {
         firstName,
         lastName,
         phoneNumber,
-        // Do not rotate password silently unless explicit via env flag
         ...(process.env.ADMIN_ROTATE_PASSWORD === 'true' ? { password } : {}),
       },
     });

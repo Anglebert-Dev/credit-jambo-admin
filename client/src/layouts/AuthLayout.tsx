@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import LogoImg from '../assets/images/unnamed.png';
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -9,10 +10,7 @@ export const AuthLayout = ({ children }: AuthLayoutProps) => {
       <div className="min-h-screen bg-linear-to-br from-[#00A651] to-[#008F45] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            <span className="text-white">CREDIT</span>
-            <span className="text-black">JAMBO</span>
-          </h1>
+          <img src={LogoImg} alt="Credit Jambo" className="mx-auto h-10 w-auto" />
           <p className="text-white/90 text-sm">Digital Credit & Savings Platform</p>
         </div>
         

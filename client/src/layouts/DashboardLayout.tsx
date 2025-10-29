@@ -56,7 +56,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </button>
             
             <Link to={ROUTES.DASHBOARD} className="flex items-center">
-              <img src={LogoImg} alt="Credit Jambo" className="h-8 w-auto" />
+              <img src={LogoImg} alt="Credit Jambo" className="h-7 w-auto md:h-8" />
             </Link>
           </div>
 

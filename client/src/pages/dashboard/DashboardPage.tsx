@@ -53,7 +53,7 @@ const DashboardPage = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card padding="md" className="bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-500">
+        <Card padding="md" className="bg-blue-50 border-l-4 border-blue-500">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Total Users</p>
@@ -70,7 +70,7 @@ const DashboardPage = () => {
           </div>
         </Card>
 
-        <Card padding="md" className="bg-gradient-to-br from-purple-50 to-purple-100 border-l-4 border-purple-500">
+        <Card padding="md" className="bg-purple-50 border-l-4 border-purple-500">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Credit Requests</p>
@@ -87,7 +87,7 @@ const DashboardPage = () => {
           </div>
         </Card>
 
-        <Card padding="md" className="bg-gradient-to-br from-green-50 to-green-100 border-l-4 border-[#00A651]">
+        <Card padding="md" className="bg-green-50 border-l-4 border-[#00A651]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Total Savings</p>
@@ -104,7 +104,7 @@ const DashboardPage = () => {
           </div>
         </Card>
 
-        <Card padding="md" className="bg-gradient-to-br from-orange-50 to-orange-100 border-l-4 border-orange-500">
+        <Card padding="md" className="bg-orange-50 border-l-4 border-orange-500">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Active Sessions</p>
@@ -178,7 +178,7 @@ const DashboardPage = () => {
             <h2 className="text-xl font-semibold text-black">Savings Analytics</h2>
           </div>
           <div className="space-y-4">
-            <div className="p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
+            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-gray-600">Total Balance</span>
                 <TrendingUp className="text-green-600" size={16} />

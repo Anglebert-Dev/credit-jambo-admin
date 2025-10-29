@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Users as UsersIcon, Filter } from 'lucide-react';
+import { Users as UsersIcon } from 'lucide-react';
 import { Card } from '../../common/components/Card';
 import { Button } from '../../common/components/Button';
 import { Input } from '../../common/components/Input';
+import { Select } from '../../common/components/Select';
 import { Loader } from '../../common/components/Loader';
 import { useToast } from '../../common/hooks/useToast';
 import { userService } from '../../services/user.service';
@@ -85,29 +86,29 @@ const UsersPage = () => {
             placeholder="user@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            icon={<Search size={18} />}
           />
-          <select
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent"
+          <Select
             value={role}
-            onChange={(e) => setRole(e.target.value)}
-          >
-            <option value="">All Roles</option>
-            <option value="admin">Admin</option>
-            <option value="customer">Customer</option>
-          </select>
-          <select
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent"
+            onChange={setRole}
+            options={[
+              { label: 'All Roles', value: '' },
+              { label: 'Admin', value: 'admin' },
+              { label: 'Customer', value: 'customer' },
+            ]}
+          />
+          <Select
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
-          >
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="suspended">Suspended</option>
-            <option value="pending">Pending</option>
-          </select>
+            onChange={setStatus}
+            options={[
+              { label: 'All Status', value: '' },
+              { label: 'Active', value: 'active' },
+              { label: 'Suspended', value: 'suspended' },
+              { label: 'Pending', value: 'pending' },
+            ]}
+          />
           <Button
             variant="outline"
+            className="w-full md:w-auto"
             onClick={() => {
               setEmail('');
               setRole('');
@@ -127,7 +128,30 @@ const UsersPage = () => {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div className="block md:hidden space-y-3">
+              {users.map((u) => (
+                <div key={u.id} className="p-4 border border-gray-200 rounded-lg bg-white">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-black">{u.firstName} {u.lastName}</div>
+                      <div className="text-xs text-gray-500">{formatDateTime(u.createdAt)}</div>
+                    </div>
+                    <span className={`text-xs px-2 py-1 rounded-full ${getStatusBadge(u.status)}`}>{u.status}</span>
+                  </div>
+                  <div className="mt-2 text-sm text-gray-700 break-all">{u.email}</div>
+                  <div className="mt-1 text-sm text-gray-700">{u.phoneNumber}</div>
+                  <div className="mt-2 flex items-center justify-between text-sm text-gray-600">
+                    <span className={`text-xs px-2 py-1 rounded-full ${getRoleBadge(u.role)}`}>{u.role}</span>
+                    <span>{u.lastLoginAt ? formatDateTime(u.lastLoginAt) : 'Never'}</span>
+                  </div>
+                  <div className="mt-3">
+                    <Button className="w-full" variant="ghost" size="sm" onClick={() => navigate(ROUTES.USER_DETAILS(u.id))}>View</Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
