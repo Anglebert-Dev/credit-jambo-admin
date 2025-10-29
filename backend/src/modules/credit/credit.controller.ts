@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { CreditService } from './credit.service';
 import { authMiddleware } from '../../common/middleware/auth.middleware';
 import { validationMiddleware } from '../../common/middleware/validation.middleware';
-import { adminListCreditsValidation, creditIdParamValidation, rejectReasonValidation } from './credit.validation';
+import { adminListCreditsValidation, creditIdParamValidation, rejectReasonValidation, approvePayloadValidation } from './credit.validation';
 import { successResponse, paginatedResponse } from '../../common/utils/response.util';
 
 const router = Router();
@@ -112,6 +112,16 @@ router.get(
  *         required: true
  *         schema:
  *           type: string
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               interestRate:
+ *                 type: number
+ *                 description: Optional override interest rate for this request
  *     responses:
  *       200:
  *         description: Approved
@@ -119,11 +129,12 @@ router.get(
 router.patch(
   '/requests/:id/approve',
   authMiddleware,
-  creditIdParamValidation,
+  [...creditIdParamValidation, ...approvePayloadValidation],
   validationMiddleware,
   async (req: Request & { user?: { sub: string } }, res: Response, next: NextFunction) => {
     try {
-      const result = await creditService.approveRequest(req.params.id, req.user!.sub);
+      const interestRate = (req.body as any)?.interestRate;
+      const result = await creditService.approveRequest(req.params.id, req.user!.sub, typeof interestRate === 'number' ? interestRate : undefined);
       res.json(successResponse(result, 'Approved'));
     } catch (error) {
       next(error);

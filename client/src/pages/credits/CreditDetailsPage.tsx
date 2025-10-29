@@ -17,6 +17,7 @@ const CreditDetailsPage = () => {
   const [request, setRequest] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showApproveModal, setShowApproveModal] = useState(false);
+  const [approveRate, setApproveRate] = useState<string>('');
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -43,9 +44,11 @@ const CreditDetailsPage = () => {
     if (!id) return;
     try {
       setIsProcessing(true);
-      await creditService.approve(id);
+      const rateNum = approveRate.trim() ? Number(approveRate) : undefined;
+      await creditService.approve(id, rateNum && rateNum > 0 ? rateNum : undefined);
       success('Credit request approved successfully');
       setShowApproveModal(false);
+      setApproveRate('');
       fetchCreditDetails();
     } catch (err: any) {
       showError(err?.message || 'Failed to approve request');
@@ -284,9 +287,22 @@ const CreditDetailsPage = () => {
         title="Approve Credit Request"
       >
         <div className="space-y-4">
-          <p className="text-gray-700">
-            Are you sure you want to approve this credit request of {formatCurrency(request?.amount)}?
-          </p>
+          <p className="text-gray-700">Approve this credit request of {formatCurrency(request?.amount)}.</p>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Override Interest Rate (optional)
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={approveRate}
+              onChange={(e) => setApproveRate(e.target.value)}
+              placeholder={`${request?.interestRate}`}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00A651] focus:border-[#00A651] focus:outline-none transition-all"
+            />
+            <p className="text-xs text-gray-500 mt-1">Leave empty to keep {request?.interestRate}%.</p>
+          </div>
           <div className="flex gap-2 justify-end">
             <Button variant="outline" onClick={() => setShowApproveModal(false)}>
               Cancel

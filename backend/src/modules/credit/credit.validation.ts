@@ -13,6 +13,10 @@ export const creditIdParamValidation = [
   param('id').isString().notEmpty(),
 ];
 
+export const approvePayloadValidation = [
+  body('interestRate').optional().isFloat({ gt: 0 }).withMessage('interestRate must be > 0')
+];
+
 export const rejectReasonValidation = [
   body('reason').isString().notEmpty(),
 ];

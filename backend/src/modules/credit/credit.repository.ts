@@ -8,7 +8,7 @@ export interface CreditRepository {
   findRequestById(id: string): Promise<any | null>;
   findRequestWithRepayments(id: string): Promise<any | null>;
   findRequestWithUserAndRepayments(id: string): Promise<any | null>;
-  updateRequestStatus(id: string, data: { status: string; approvedBy?: string | null; approvedAt?: Date | null; rejectionReason?: string | null }): Promise<any>;
+  updateRequestStatus(id: string, data: { status: string; approvedBy?: string | null; approvedAt?: Date | null; rejectionReason?: string | null; interestRate?: any }): Promise<any>;
 
   findRepaymentByReference(referenceNumber: string): Promise<any | null>;
   createRepayment(data: any): Promise<any>;
@@ -66,7 +66,7 @@ export class PrismaCreditRepository implements CreditRepository {
     return prisma.creditRepayment.count({ where: { creditRequestId: requestId } });
   }
 
-  updateRequestStatus(id: string, data: { status: string; approvedBy?: string | null; approvedAt?: Date | null; rejectionReason?: string | null }) {
+  updateRequestStatus(id: string, data: { status: string; approvedBy?: string | null; approvedAt?: Date | null; rejectionReason?: string | null; interestRate?: any }) {
     return prisma.creditRequest.update({ where: { id }, data });
   }
 }

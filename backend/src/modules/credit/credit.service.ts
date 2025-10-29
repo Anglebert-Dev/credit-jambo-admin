@@ -78,7 +78,7 @@ export class CreditService {
     return req;
   }
 
-  async approveRequest(id: string, adminId: string) {
+  async approveRequest(id: string, adminId: string, interestRate?: number) {
     const req = await this.repo.findRequestById(id);
     if (!req) {
       throw new NotFoundError('Credit request not found');
@@ -86,7 +86,11 @@ export class CreditService {
     if (req.status !== 'pending') {
       throw new BadRequestError('Only pending requests can be approved');
     }
-    const updated = await this.repo.updateRequestStatus(id, { status: 'approved', approvedBy: adminId, approvedAt: new Date(), rejectionReason: null });
+    const data: any = { status: 'approved', approvedBy: adminId, approvedAt: new Date(), rejectionReason: null };
+    if (typeof interestRate === 'number' && interestRate > 0) {
+      data.interestRate = interestRate as any;
+    }
+    const updated = await this.repo.updateRequestStatus(id, data);
     
     try {
       const notifications = new NotificationsService();

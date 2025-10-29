@@ -102,25 +102,27 @@ const UserDetailsPage = () => {
             <p className="text-gray-600 mt-1">{user.email}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowStatusModal(true)}
-          >
-            <Edit2 size={16} className="mr-2" />
-            Update Status
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-            onClick={() => setShowDeleteModal(true)}
-          >
-            <Trash2 size={16} className="mr-2" />
-            Delete
-          </Button>
-        </div>
+        {user.role !== 'admin' && (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowStatusModal(true)}
+            >
+              <Edit2 size={16} className="mr-2" />
+              Update Status
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={() => setShowDeleteModal(true)}
+            >
+              <Trash2 size={16} className="mr-2" />
+              Delete
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

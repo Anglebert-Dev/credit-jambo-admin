@@ -18,9 +18,11 @@ export const creditService = {
     return response.data.data!;
   },
 
-  async approve(id: string): Promise<any> {
+  async approve(id: string, interestRate?: number): Promise<any> {
+    const payload = typeof interestRate === 'number' && interestRate > 0 ? { interestRate } : undefined;
     const response = await api.patch<ApiResponse<any>>(
-      API_ENDPOINTS.credit.approve(id)
+      API_ENDPOINTS.credit.approve(id),
+      payload
     );
     return response.data.data!;
   },
