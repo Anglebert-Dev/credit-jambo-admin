@@ -112,7 +112,7 @@ router.get(
  *         description: Users listed
  */
 router.get(
-  '/users',
+  '/',
   authMiddleware,
   listUsersValidation,
   validationMiddleware,
@@ -153,7 +153,7 @@ router.get(
  *         description: User details
  */
 router.get(
-  '/users/:id',
+  '/:id',
   authMiddleware,
   userIdParamValidation,
   validationMiddleware,
@@ -195,7 +195,7 @@ router.get(
  *         description: Status updated
  */
 router.patch(
-  '/users/:id/status',
+  '/:id/status',
   authMiddleware,
   updateUserStatusValidation,
   validationMiddleware,
@@ -228,7 +228,7 @@ router.patch(
  *         description: User soft-deleted
  */
 router.delete(
-  '/users/:id',
+  '/:id',
   authMiddleware,
   userIdParamValidation,
   validationMiddleware,
