@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { CreditService } from './credit.service';
 import { authMiddleware } from '../../common/middleware/auth.middleware';
 import { validationMiddleware } from '../../common/middleware/validation.middleware';
-import { requestCreditValidation, getCreditRequestsValidation, repaymentValidation, getRepaymentHistoryValidation } from './credit.validation';
+import { adminListCreditsValidation, creditIdParamValidation, rejectReasonValidation } from './credit.validation';
 import { successResponse, paginatedResponse } from '../../common/utils/response.util';
 
 const router = Router();
@@ -10,65 +10,10 @@ const creditService = new CreditService();
 
 /**
  * @swagger
- * /api/credit/request:
- *   post:
- *     tags: [Credit]
- *     summary: Request credit
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - amount
- *               - purpose
- *               - durationMonths
- *             properties:
- *               amount:
- *                 type: number
- *                 minimum: 0.01
- *               purpose:
- *                 type: string
- *                 minLength: 10
- *                 maxLength: 500
- *               durationMonths:
- *                 type: integer
- *                 minimum: 1
- *                 maximum: 120
- *     responses:
- *       201:
- *         description: Credit request created successfully
- *       400:
- *         description: Invalid input
- *       401:
- *         description: Unauthorized
- *       409:
- *         description: Pending request already exists
- */
-router.post(
-  '/request',
-  authMiddleware,
-  requestCreditValidation,
-  validationMiddleware,
-  async (req: Request & { user?: { sub: string } }, res: Response, next: NextFunction) => {
-    try {
-      const result = await creditService.requestCredit(req.user!.sub, req.body);
-      res.status(201).json(successResponse(result, 'Credit request submitted successfully'));
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-/**
- * @swagger
  * /api/credit/requests:
  *   get:
  *     tags: [Credit]
- *     summary: Get all credit requests
+ *     summary: List all credit requests
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -77,38 +22,43 @@ router.post(
  *         schema:
  *           type: integer
  *           default: 1
- *         description: Page number
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           default: 10
- *         description: Items per page
  *       - in: query
  *         name: status
  *         schema:
  *           type: string
- *           enum: [pending, approved, rejected]
- *         description: Filter by status
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
  *     responses:
  *       200:
- *         description: Successfully retrieved credit requests
- *       401:
- *         description: Unauthorized
+ *         description: Successfully retrieved all credit requests
  */
 router.get(
   '/requests',
   authMiddleware,
-  getCreditRequestsValidation,
+  adminListCreditsValidation,
   validationMiddleware,
-  async (req: Request & { user?: { sub: string } }, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
-      const status = req.query.status as string | undefined;
+      const page = parseInt((req.query.page as string) || '1');
+      const limit = parseInt((req.query.limit as string) || '10');
+      const status = (req.query.status as string) || undefined;
+      const sortBy = (req.query.sortBy as string) || 'createdAt';
+      const order = (req.query.order as 'asc' | 'desc') || 'desc';
 
-      const result = await creditService.getCreditRequests(req.user!.sub, page, limit, status);
-      res.json(paginatedResponse(result.requests, page, limit, result.total));
+      const result = await creditService.adminListRequests(page, limit, status, sortBy, order);
+      res.json(paginatedResponse(result.requests, result.page, result.limit, result.total));
     } catch (error) {
       next(error);
     }
@@ -120,7 +70,7 @@ router.get(
  * /api/credit/requests/{id}:
  *   get:
  *     tags: [Credit]
- *     summary: Get credit request by ID
+ *     summary: Get credit request details with user and repayments
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -129,21 +79,18 @@ router.get(
  *         required: true
  *         schema:
  *           type: string
- *         description: Credit request ID
  *     responses:
  *       200:
- *         description: Successfully retrieved credit request
- *       404:
- *         description: Credit request not found
- *       401:
- *         description: Unauthorized
+ *         description: Credit request detail
  */
 router.get(
   '/requests/:id',
   authMiddleware,
-  async (req: Request & { user?: { sub: string } }, res: Response, next: NextFunction) => {
+  creditIdParamValidation,
+  validationMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await creditService.getCreditRequestById(req.params.id, req.user!.sub);
+      const result = await creditService.adminGetRequestDetails(req.params.id);
       res.json(successResponse(result));
     } catch (error) {
       next(error);
@@ -153,10 +100,10 @@ router.get(
 
 /**
  * @swagger
- * /api/credit/repay/{id}:
- *   post:
+ * /api/credit/requests/{id}/approve:
+ *   patch:
  *     tags: [Credit]
- *     summary: Make a repayment
+ *     summary: Approve credit request
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -165,38 +112,19 @@ router.get(
  *         required: true
  *         schema:
  *           type: string
- *         description: Credit request ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - amount
- *             properties:
- *               amount:
- *                 type: number
- *                 minimum: 0.01
  *     responses:
  *       200:
- *         description: Repayment successful
- *       400:
- *         description: Invalid input or request
- *       404:
- *         description: Credit request not found
- *       401:
- *         description: Unauthorized
+ *         description: Approved
  */
-router.post(
-  '/repay/:id',
+router.patch(
+  '/requests/:id/approve',
   authMiddleware,
-  repaymentValidation,
+  creditIdParamValidation,
   validationMiddleware,
   async (req: Request & { user?: { sub: string } }, res: Response, next: NextFunction) => {
     try {
-      const result = await creditService.makeRepayment(req.params.id, req.user!.sub, req.body);
-      res.json(successResponse(result, 'Repayment successful'));
+      const result = await creditService.approveRequest(req.params.id, req.user!.sub);
+      res.json(successResponse(result, 'Approved'));
     } catch (error) {
       next(error);
     }
@@ -205,10 +133,10 @@ router.post(
 
 /**
  * @swagger
- * /api/credit/repayments/{id}:
- *   get:
+ * /api/credit/requests/{id}/reject:
+ *   patch:
  *     tags: [Credit]
- *     summary: Get repayment history
+ *     summary: Reject credit request
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -217,39 +145,28 @@ router.post(
  *         required: true
  *         schema:
  *           type: string
- *         description: Credit request ID
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Page number
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: Items per page
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               reason:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Successfully retrieved repayment history
- *       404:
- *         description: Credit request not found
- *       401:
- *         description: Unauthorized
+ *         description: Rejected
  */
-router.get(
-  '/repayments/:id',
+router.patch(
+  '/requests/:id/reject',
   authMiddleware,
-  getRepaymentHistoryValidation,
+  [...creditIdParamValidation, ...rejectReasonValidation],
   validationMiddleware,
   async (req: Request & { user?: { sub: string } }, res: Response, next: NextFunction) => {
     try {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
-
-      const result = await creditService.getRepaymentHistory(req.params.id, req.user!.sub, page, limit);
-      res.json(paginatedResponse(result.repayments, page, limit, result.total));
+      const result = await creditService.rejectRequest(req.params.id, req.user!.sub, (req.body as any).reason);
+      res.json(successResponse(result, 'Rejected'));
     } catch (error) {
       next(error);
     }

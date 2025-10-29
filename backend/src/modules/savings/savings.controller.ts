@@ -360,6 +360,49 @@ router.get(
 
 /**
  * @swagger
+ * /api/savings/analytics:
+ *   get:
+ *     tags: [Savings]
+ *     summary: Get savings analytics overview
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Analytics overview
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalBalance:
+ *                       type: number
+ *                     totalAccounts:
+ *                       type: integer
+ *                     depositsCount:
+ *                       type: integer
+ *                     withdrawalsCount:
+ *                       type: integer
+ */
+router.get(
+  '/analytics',
+  authMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const stats = await savingsService.getAnalytics();
+      res.json(successResponse(stats));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * @swagger
  * /api/savings/freeze:
  *   post:
  *     tags: [Savings]

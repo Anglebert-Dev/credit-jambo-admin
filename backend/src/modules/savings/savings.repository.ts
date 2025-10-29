@@ -13,6 +13,10 @@ export interface SavingsRepository {
   listTransactions(accountId: string, skip: number, take: number): Promise<any[]>;
   countTransactions(accountId: string): Promise<number>;
   deleteAccountByUserId(userId: string): Promise<void>;
+
+  sumAllBalances(): Promise<number>;
+  countAllAccounts(): Promise<number>;
+  countTransactionsByType(type: 'deposit' | 'withdrawal'): Promise<number>;
 }
 
 export class PrismaSavingsRepository implements SavingsRepository {
@@ -65,5 +69,18 @@ export class PrismaSavingsRepository implements SavingsRepository {
 
   async deleteAccountByUserId(userId: string) {
     await prisma.savingsAccount.delete({ where: { userId } });
+  }
+
+  async sumAllBalances() {
+    const result = await prisma.savingsAccount.aggregate({ _sum: { balance: true } });
+    return Number(result._sum.balance ?? 0);
+  }
+
+  countAllAccounts() {
+    return prisma.savingsAccount.count();
+  }
+
+  countTransactionsByType(type: 'deposit' | 'withdrawal') {
+    return prisma.transaction.count({ where: { type } });
   }
 }

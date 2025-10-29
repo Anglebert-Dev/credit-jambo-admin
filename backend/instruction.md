@@ -5,11 +5,7 @@ Admin Auth
 Note: no registration; enforce admin role
 
 
-Admin Users
-GET /api/admin/users (filters: role, status, email; pagination: page, limit; sorting: sortBy, order)
-GET /api/admin/users/:id
-PATCH /api/admin/users/:id/status (body: status)
-DELETE /api/admin/users/:id (soft delete)
+
 Admin Credits
 GET /api/admin/credits (filters: status; pagination: page, limit; sorting)
 GET /api/admin/credits/:id

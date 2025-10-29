@@ -7,13 +7,13 @@ dotenv.config();
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = process.env.ADMIN_EMAIL ;
-  const rawPassword = process.env.ADMIN_PASSWORD ;
-  const firstName = process.env.ADMIN_FIRST_NAME ;
-  const lastName = process.env.ADMIN_LAST_NAME ;
-  const phoneNumber = process.env.ADMIN_PHONE ;
+  const email = process.env.ADMIN_EMAIL || 'admin@creditjambo.com';
+  const rawPassword = process.env.ADMIN_PASSWORD || 'Admin@12345';
+  const firstName = process.env.ADMIN_FIRST_NAME || 'System';
+  const lastName = process.env.ADMIN_LAST_NAME || 'Admin';
+  const phoneNumber = process.env.ADMIN_PHONE || '+250788000000';
 
-  const password = await hashPassword(rawPassword || 'Admin@12345');
+  const password = await hashPassword(rawPassword);
 
   const existing = await prisma.user.findUnique({ where: { email } });
 
@@ -26,6 +26,7 @@ async function main() {
         firstName,
         lastName,
         phoneNumber,
+        // Do not rotate password silently unless explicit via env flag
         ...(process.env.ADMIN_ROTATE_PASSWORD === 'true' ? { password } : {}),
       },
     });

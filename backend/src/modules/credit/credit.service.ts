@@ -1,7 +1,6 @@
 import { BadRequestError } from '../../common/exceptions/BadRequestError';
 import { NotFoundError } from '../../common/exceptions/NotFoundError';
-import { ConflictError } from '../../common/exceptions/ConflictError';
-import { CreditRequestDto, CreditRepaymentDto, CreditRequest, CreditRepayment, RepaymentHistoryResponse, CreditRequestResponse } from './credit.types';
+import { CreditRepaymentDto } from './credit.types';
 import { CreditRepository, PrismaCreditRepository } from './credit.repository';
 
 export class CreditService {
@@ -11,109 +10,7 @@ export class CreditService {
     return `CR${Date.now()}${Math.floor(Math.random() * 1000)}`;
   }
 
-  async requestCredit(userId: string, data: CreditRequestDto): Promise<Omit<CreditRequest, 'userId'>> {
-    if (data.amount <= 0) {
-      throw new BadRequestError('Amount must be greater than 0');
-    }
-
-    if (data.durationMonths < 1 || data.durationMonths > 120) {
-      throw new BadRequestError('Duration must be between 1 and 120 months');
-    }
-
-    const existingPendingRequest = await this.repo.findPendingRequestByUser(userId);
-
-    if (existingPendingRequest) {
-      throw new ConflictError('You already have a pending credit request');
-    }
-
-    const interestRate = 5.00;
-
-    const request = await this.repo.createRequest({
-      userId,
-      amount: data.amount,
-      purpose: data.purpose,
-      durationMonths: data.durationMonths,
-      interestRate,
-      status: 'pending'
-    });
-
-    return {
-      id: request.id,
-      amount: Number(request.amount),
-      purpose: request.purpose,
-      durationMonths: request.durationMonths,
-      interestRate: Number(request.interestRate),
-      status: request.status,
-      approvedBy: request.approvedBy || undefined,
-      approvedAt: request.approvedAt || undefined,
-      rejectionReason: request.rejectionReason || undefined,
-      createdAt: request.createdAt,
-      updatedAt: request.updatedAt
-    };
-  }
-
-  async getCreditRequests(userId: string, page: number = 1, limit: number = 10, status?: string): Promise<CreditRequestResponse> {
-    const skip = (page - 1) * limit;
-
-    const where: any = { userId };
-    if (status) {
-      where.status = status;
-    }
-
-    const [requests, total] = await Promise.all([
-      this.repo.listRequests(where, skip, limit),
-      this.repo.countRequests(where)
-    ]);
-
-    return {
-      requests: requests.map(req => ({
-        id: req.id,
-        userId: req.userId,
-        amount: Number(req.amount),
-        purpose: req.purpose,
-        durationMonths: req.durationMonths,
-        interestRate: Number(req.interestRate),
-        status: req.status,
-        approvedBy: req.approvedBy || undefined,
-        approvedAt: req.approvedAt || undefined,
-        rejectionReason: req.rejectionReason || undefined,
-        createdAt: req.createdAt,
-        updatedAt: req.updatedAt
-      })),
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    };
-  }
-
-  async getCreditRequestById(requestId: string, userId: string): Promise<Omit<CreditRequest, 'userId'>> {
-    const request = await this.repo.findRequestById(requestId);
-
-    if (!request) {
-      throw new NotFoundError('Credit request not found');
-    }
-
-    if (request.userId !== userId) {
-      throw new NotFoundError('Credit request not found');
-    }
-
-    return {
-      id: request.id,
-      amount: Number(request.amount),
-      purpose: request.purpose,
-      durationMonths: request.durationMonths,
-      interestRate: Number(request.interestRate),
-      status: request.status,
-      approvedBy: request.approvedBy || undefined,
-      approvedAt: request.approvedAt || undefined,
-      rejectionReason: request.rejectionReason || undefined,
-      createdAt: request.createdAt,
-      updatedAt: request.updatedAt
-    };
-  }
-
-  async makeRepayment(requestId: string, userId: string, data: CreditRepaymentDto): Promise<CreditRepayment> {
+  async makeRepayment(requestId: string, userId: string, data: CreditRepaymentDto) {
     const request = await this.repo.findRequestWithRepayments(requestId);
 
     if (!request) {
@@ -154,47 +51,53 @@ export class CreditService {
       referenceNumber
     });
 
-    return {
-      id: repayment.id,
-      creditRequestId: repayment.creditRequestId,
-      amount: Number(repayment.amount),
-      referenceNumber: repayment.referenceNumber,
-      paymentDate: repayment.paymentDate,
-      createdAt: repayment.createdAt
-    };
+    return repayment;
   }
 
-  async getRepaymentHistory(requestId: string, userId: string, page: number = 1, limit: number = 10): Promise<RepaymentHistoryResponse> {
+
+  async adminListRequests(page: number = 1, limit: number = 10, status?: string, sortBy: string = 'createdAt', order: 'asc' | 'desc' = 'desc') {
     const skip = (page - 1) * limit;
-
-    const request = await this.repo.findRequestById(requestId);
-
-    if (!request) {
-      throw new NotFoundError('Credit request not found');
+    const where: any = {};
+    if (status) {
+      where.status = status;
     }
-
-    if (request.userId !== userId) {
-      throw new NotFoundError('Credit request not found');
-    }
-
-    const [repayments, total] = await Promise.all([
-      this.repo.listRepayments(requestId, skip, limit),
-      this.repo.countRepayments(requestId)
+    const orderBy: any = { [sortBy]: order };
+    const [requests, total] = await Promise.all([
+      this.repo.listRequests(where, skip, limit),
+      this.repo.countRequests(where)
     ]);
+    return { requests, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
 
-    return {
-      repayments: repayments.map(repayment => ({
-        id: repayment.id,
-        creditRequestId: repayment.creditRequestId,
-        amount: Number(repayment.amount),
-        referenceNumber: repayment.referenceNumber,
-        paymentDate: repayment.paymentDate,
-        createdAt: repayment.createdAt
-      })),
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    };
+  async adminGetRequestDetails(id: string) {
+    const req = await this.repo.findRequestWithUserAndRepayments(id);
+    if (!req) {
+      throw new NotFoundError('Credit request not found');
+    }
+    return req;
+  }
+
+  async approveRequest(id: string, adminId: string) {
+    const req = await this.repo.findRequestById(id);
+    if (!req) {
+      throw new NotFoundError('Credit request not found');
+    }
+    if (req.status !== 'pending') {
+      throw new BadRequestError('Only pending requests can be approved');
+    }
+    const updated = await this.repo.updateRequestStatus(id, { status: 'approved', approvedBy: adminId, approvedAt: new Date(), rejectionReason: null });
+    return updated;
+  }
+
+  async rejectRequest(id: string, adminId: string, reason: string) {
+    const req = await this.repo.findRequestById(id);
+    if (!req) {
+      throw new NotFoundError('Credit request not found');
+    }
+    if (req.status !== 'pending') {
+      throw new BadRequestError('Only pending requests can be rejected');
+    }
+    const updated = await this.repo.updateRequestStatus(id, { status: 'rejected', approvedBy: adminId, approvedAt: null, rejectionReason: reason });
+    return updated;
   }
 }

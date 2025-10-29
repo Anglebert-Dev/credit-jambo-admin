@@ -194,6 +194,22 @@ export class SavingsService {
     await this.repo.deleteAccountByUserId(userId);
   }
 
+  async getAnalytics() {
+    const [totalBalance, totalAccounts, depositsCount, withdrawalsCount] = await Promise.all([
+      this.repo.sumAllBalances(),
+      this.repo.countAllAccounts(),
+      this.repo.countTransactionsByType('deposit'),
+      this.repo.countTransactionsByType('withdrawal'),
+    ]);
+
+    return {
+      totalBalance,
+      totalAccounts,
+      depositsCount,
+      withdrawalsCount,
+    };
+  }
+
   private generateReference(): string {
     return `TXN${Date.now()}${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
   }

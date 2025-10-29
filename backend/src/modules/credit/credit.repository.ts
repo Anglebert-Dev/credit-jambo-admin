@@ -7,6 +7,8 @@ export interface CreditRepository {
   countRequests(where: any): Promise<number>;
   findRequestById(id: string): Promise<any | null>;
   findRequestWithRepayments(id: string): Promise<any | null>;
+  findRequestWithUserAndRepayments(id: string): Promise<any | null>;
+  updateRequestStatus(id: string, data: { status: string; approvedBy?: string | null; approvedAt?: Date | null; rejectionReason?: string | null }): Promise<any>;
 
   findRepaymentByReference(referenceNumber: string): Promise<any | null>;
   createRepayment(data: any): Promise<any>;
@@ -39,6 +41,10 @@ export class PrismaCreditRepository implements CreditRepository {
     return prisma.creditRequest.findUnique({ where: { id }, include: { repayments: true } });
   }
 
+  findRequestWithUserAndRepayments(id: string) {
+    return prisma.creditRequest.findUnique({ where: { id }, include: { user: true, repayments: true } });
+  }
+
   findRepaymentByReference(referenceNumber: string) {
     return prisma.creditRepayment.findUnique({ where: { referenceNumber } });
   }
@@ -58,5 +64,9 @@ export class PrismaCreditRepository implements CreditRepository {
 
   countRepayments(requestId: string) {
     return prisma.creditRepayment.count({ where: { creditRequestId: requestId } });
+  }
+
+  updateRequestStatus(id: string, data: { status: string; approvedBy?: string | null; approvedAt?: Date | null; rejectionReason?: string | null }) {
+    return prisma.creditRequest.update({ where: { id }, data });
   }
 }
