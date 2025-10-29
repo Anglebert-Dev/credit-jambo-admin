@@ -4,6 +4,7 @@ import usersRoutes from '../modules/users/users.controller';
 import savingsRoutes from '../modules/savings/savings.controller';
 import creditRoutes from '../modules/credit/credit.controller';
 import notificationsRoutes from '../modules/notifications/notifications.controller';
+import analyticsRoutes from '../modules/analytics/analytics.controller';
 
 const router = Router();
 
@@ -12,5 +13,6 @@ router.use('/admin/users', usersRoutes);
 router.use('/admin/savings', savingsRoutes);
 router.use('/admin/credit', creditRoutes);
 router.use('/admin/notifications', notificationsRoutes);
+router.use('/admin/analytics', analyticsRoutes);
 
 export default router;
