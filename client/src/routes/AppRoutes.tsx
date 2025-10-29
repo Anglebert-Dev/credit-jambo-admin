@@ -7,6 +7,10 @@ import { DashboardLayout } from '../layouts/DashboardLayout';
 import { Loader } from '../common/components/Loader';
 
 const LoginPage = lazy(() => import('../pages/auth/LoginPage'));
+const UsersPage = lazy(() => import('../pages/users/UsersPage'));
+const UserDetailsPage = lazy(() => import('../pages/users/UserDetailsPage'));
+const CreditsPage = lazy(() => import('../pages/credits/CreditsPage'));
+const CreditDetailsPage = lazy(() => import('../pages/credits/CreditDetailsPage'));
 const DashboardPage = lazy(() => import('../pages/dashboard/DashboardPage'));
 const ProfilePage = lazy(() => import('../pages/profile/ProfilePage'));
 const NotificationsPage = lazy(() => import('../pages/notifications/NotificationsPage'));
@@ -41,17 +45,38 @@ export const AppRoutes = () => {
             element={
               <PrivateRoute>
                 <DashboardLayout>
-                  <DashboardPage />
+                  <UsersPage />
                 </DashboardLayout>
               </PrivateRoute>
             }
           />
           <Route
+            path={ROUTES.USER_DETAILS(':id')}
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <UserDetailsPage />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+    
+          <Route
             path={ROUTES.CREDITS}
             element={
               <PrivateRoute>
                 <DashboardLayout>
-                  <DashboardPage />
+                  <CreditsPage />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path={ROUTES.CREDIT_DETAILS(':id')}
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <CreditDetailsPage />
                 </DashboardLayout>
               </PrivateRoute>
             }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, Search, Filter } from 'lucide-react';
+import { CreditCard, Filter } from 'lucide-react';
 import { Card } from '../../common/components/Card';
 import { Button } from '../../common/components/Button';
 import { Loader } from '../../common/components/Loader';
@@ -71,6 +71,10 @@ const CreditsPage = () => {
 
       <Card padding="md">
         <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center gap-2">
+            <Filter size={18} className="text-gray-500" />
+            <span className="text-sm text-gray-600">Filter by status:</span>
+          </div>
           <select
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00A651] focus:border-transparent"
             value={status}
@@ -83,12 +87,15 @@ const CreditsPage = () => {
             <option value="disbursed">Disbursed</option>
             <option value="repaid">Repaid</option>
           </select>
-          <Button
-            variant="outline"
-            onClick={() => setStatus('')}
-          >
-            Clear Filter
-          </Button>
+          {status && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setStatus('')}
+            >
+              Clear Filter
+            </Button>
+          )}
         </div>
 
         {isLoading ? (
@@ -96,7 +103,8 @@ const CreditsPage = () => {
         ) : requests.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
             <CreditCard size={48} className="mx-auto mb-4 text-gray-300" />
-            <p>No credit requests found</p>
+            <p className="font-medium">No credit requests found</p>
+            <p className="text-sm mt-1">Try adjusting your filters</p>
           </div>
         ) : (
           <>
@@ -107,7 +115,7 @@ const CreditsPage = () => {
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Amount</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Purpose</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Duration</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Interest Rate</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Interest</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Created</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
@@ -115,17 +123,19 @@ const CreditsPage = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {requests.map((request) => (
-                    <tr key={request.id} className="hover:bg-gray-50">
+                    <tr key={request.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-3">
-                        <div className="font-medium text-black">{formatCurrency(request.amount)}</div>
+                        <div className="font-semibold text-black">{formatCurrency(request.amount)}</div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="text-gray-700 max-w-md truncate">{request.purpose}</div>
+                        <div className="text-gray-700 max-w-md truncate" title={request.purpose}>
+                          {request.purpose}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-gray-700">{request.durationMonths} months</td>
                       <td className="px-4 py-3 text-gray-700">{request.interestRate}%</td>
                       <td className="px-4 py-3">
-                        <span className={`text-xs px-2 py-1 rounded-full ${getStatusBadge(request.status)}`}>
+                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${getStatusBadge(request.status)}`}>
                           {request.status}
                         </span>
                       </td>
@@ -138,7 +148,7 @@ const CreditsPage = () => {
                           size="sm"
                           onClick={() => navigate(ROUTES.CREDIT_DETAILS(request.id))}
                         >
-                          View
+                          View Details
                         </Button>
                       </td>
                     </tr>
@@ -178,4 +188,3 @@ const CreditsPage = () => {
 };
 
 export default CreditsPage;
-
