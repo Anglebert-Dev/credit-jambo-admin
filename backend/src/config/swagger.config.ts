@@ -7,9 +7,9 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Credit Jambo Client API',
+      title: 'Credit Jambo Admin API',
       version: '1.0.0',
-      description: 'Digital Credit & Savings Platform - Customer API',
+      description: 'Digital Credit & Savings Platform - Admin Management API',
       contact: {
         name: 'Credit Jambo Ltd',
         email: 'hello@creditjambo.com',

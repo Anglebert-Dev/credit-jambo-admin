@@ -3,8 +3,6 @@ import prisma from '../../config/database';
 export interface AuthRepository {
   findUserByEmail(email: string): Promise<any | null>;
   findUserById(id: string): Promise<any | null>;
-  findUserByPhone(phoneNumber: string): Promise<any | null>;
-  createUser(data: any): Promise<any>;
 
   createRefreshToken(data: { userId: string; token: string; expiresAt: Date; deviceInfo?: string | null; ipAddress?: string | null }): Promise<void>;
   findRefreshToken(token: string): Promise<{ token: string; userId: string; expiresAt: Date; revokedAt: Date | null; user: any } | null>;
@@ -18,14 +16,6 @@ export class PrismaAuthRepository implements AuthRepository {
 
   findUserById(id: string) {
     return prisma.user.findUnique({ where: { id } });
-  }
-
-  findUserByPhone(phoneNumber: string) {
-    return prisma.user.findUnique({ where: { phoneNumber } });
-  }
-
-  createUser(data: any) {
-    return prisma.user.create({ data });
   }
 
   async createRefreshToken(data: { userId: string; token: string; expiresAt: Date; deviceInfo?: string | null; ipAddress?: string | null }) {

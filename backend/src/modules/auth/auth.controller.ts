@@ -2,87 +2,19 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { AuthService } from './auth.service';
 import { validationMiddleware } from '../../common/middleware/validation.middleware';
 import { authMiddleware } from '../../common/middleware/auth.middleware';
-import { registerValidation, loginValidation, refreshTokenValidation } from './auth.validation';
+import { loginValidation, refreshTokenValidation } from './auth.validation';
 import { successResponse } from '../../common/utils/response.util';
 
 const router = Router();
 const authService = new AuthService();
 
-/**
- * @swagger
- * /api/auth/register:
- *   post:
- *     tags: [Authentication]
- *     summary: Register new customer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *               - firstName
- *               - lastName
- *               - phoneNumber
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *               password:
- *                 type: string
- *                 minLength: 8
- *               firstName:
- *                 type: string
- *               lastName:
- *                 type: string
- *               phoneNumber:
- *                 type: string
- *     responses:
- *       201:
- *         description: User registered successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: object
- *                   properties:
- *                     accessToken:
- *                       type: string
- *                     refreshToken:
- *                       type: string
- *                     user:
- *                       type: object
- *       400:
- *         description: Bad request
- *       409:
- *         description: User already exists
- */
-router.post(
-  '/register',
-  registerValidation,
-  validationMiddleware,
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const result = await authService.register(req.body);
-      res.status(201).json(successResponse(result, 'User registered successfully'));
-    } catch (error) {
-      next(error);
-    }
-  }
-);
 
 /**
  * @swagger
- * /api/auth/login:
+ * /api/admin/auth/login:
  *   post:
  *     tags: [Authentication]
- *     summary: Customer login
+ *     summary: Admin login
  *     requestBody:
  *       required: true
  *       content:
@@ -139,10 +71,10 @@ router.post(
 
 /**
  * @swagger
- * /api/auth/refresh:
+ * /api/admin/auth/refresh:
  *   post:
  *     tags: [Authentication]
- *     summary: Refresh access token
+ *     summary: Refresh access token (Admin)
  *     requestBody:
  *       required: true
  *       content:
@@ -195,10 +127,10 @@ router.post(
 
 /**
  * @swagger
- * /api/auth/logout:
+ * /api/admin/auth/logout:
  *   post:
  *     tags: [Authentication]
- *     summary: Logout and revoke refresh token
+ *     summary: Admin logout and revoke refresh token
  *     security:
  *       - bearerAuth: []
  *     requestBody:

@@ -24,6 +24,9 @@ export const authMiddleware = async (
     }
     
     const payload = verifyAccessToken(token);
+    if (!payload || payload.role !== 'admin') {
+      throw new UnauthorizedError('Admin access required');
+    }
 
     req.user = payload;
     next();
